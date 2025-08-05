@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Bot started</title>
+    <title>Canlı Bot Terminal</title>
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <style>
+        #terminal {
+            background: black;
+            color: lime;
+            padding: 10px;
+            font-family: monospace;
+            height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ message }}</h1>
+
+    <!-- Bakiye göstermek için -->
+    <p>Ballance: <span id="balance">-</span></p>
+
+    <!-- Buton -->
+    <button id="getBalanceBtn">Check Ballance</button>
+
+    <script>
+        document.getElementById("getBalanceBtn").addEventListener("click", function() {
+            fetch("/get_balance")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        document.getElementById("balance").textContent = data.balance;
+                    } else {
+                        document.getElementById("balance").textContent = "Hata: " + data.message;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById("balance").textContent = "Hata: " + error;
+                });
+        });
+    </script>
+    <form action="/">
+        <button type="submit">Home</button>
+    </form>
+    <br>
+
+    <h1>Bot Terminal</h1>
+    <a href="/start" target="_blank">Botu Başlat</a>
+    <div id="terminal"></div>
+
+    <script>
+        var socket = io();
+        var terminal = document.getElementById("terminal");
+
+        socket.on("log", function(msg) {
+            terminal.innerHTML += msg + "<br>";
+            terminal.scrollTop = terminal.scrollHeight; // Otomatik kaydır
+        });
+    </script>
+</body>
+</html>
+
+
+
+
